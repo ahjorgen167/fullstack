@@ -17,7 +17,7 @@ export default class App extends React.Component {
 
     componentDidMount() {
         console.log("message 1");
-        Axios.get('http://localhost:8000/api/people')
+        Axios.get('/api/people')
             .then((response) => {
                 console.log("message 2");
                 this.setState({
@@ -37,9 +37,9 @@ export default class App extends React.Component {
             age: this.state.age
         };
 
-        Axios.post('http://localhost:8000/api/people', newPerson)
+        Axios.post('/api/people', newPerson)
             .then(() => {
-                return Axios.get('http://localhost:8000/api/people')
+                return Axios.get('/api/people')
             })
             .then(response => 
                 this.setState({
