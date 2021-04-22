@@ -1,40 +1,28 @@
 const express = require('express')
 const router = express.Router();
 const { v4: uuid } = require('uuid');
+const peopleModel = require('./schema/people.model')
+const cookie_middleware = require('./middleware/cookie_middleware');
 
-const people = [
-    {id: "1234", name: "cheryl", age: 405},
-    {id: "5678", name: "ken", age: 604},
-    {id: "91011", name: "hael", age: 9000}
-]
 
-// router => localhost:8000/api/posts/
-router.get('/', function(req, res) {
+router.get('/', cookie_middleware, function(req, res) {
+    const username = req.username;
+    console.log(username);
+    return peopleModel.findPeopleByUsername(username)
+        .then((peopleResponse) => {
+            res.status(200).send(peopleResponse)
+        }, (error) => {
+            res.status(500)
+        })
+    
 
-    // return res.status(500).send("Server is Down :(")
-
-    if(!req.query.minAge) {
-        return res.status(200).send(people);
-    }
-
-    const minAge = Number(req.query.minAge);
-
-    const listOfPeople = [];
-
-    for (let i = 0; i < people.length; i++) {
-
-        const person = people[i];
-
-        if (person.age >= minAge) {
-            listOfPeople.push(person);
-        }
-
-    }
-
-    res.status(200).send(listOfPeople);
 })
 
+
 router.get('/:firstName', function(req, res) {
+    // localhost:8000/api/people/hunter
+    // req.params === {firstName: 'hunter'}
+
     for(let i = 0; i < people.length; i++ ){
         const person = people[i];
         if (person.name === req.params.firstName) {
@@ -46,18 +34,30 @@ router.get('/:firstName', function(req, res) {
 
 })
 
-router.post('/', function(req, res) {
+router.post('/', cookie_middleware, function(req, res) {
+    const person = req.body;
+    const username = req.username;
+    person.username = username;
+    person.id = uuid();
+    return peopleModel.addPerson(person)
+        .then((newPersonResponse) => {
 
-    const newPerson = {};
-    newPerson.name = req.body.name;
-    newPerson['age'] = req.body.age;
-    newPerson.id = uuid();
+            res.status(200).send(newPersonResponse)
 
-    console.log(newPerson);
+        }, (error) => {
+            res.status(400).send(error)
+        })
 
-    people.push(newPerson);
+    // const newPerson = {};
+    // newPerson.name = req.body.name;
+    // newPerson['age'] = req.body.age;
+    // newPerson.id = uuid();
 
-    res.sendStatus(200);
+    // console.log(newPerson);
+
+    // people.push(newPerson);
+
+    // res.sendStatus(200);
 
 })
 

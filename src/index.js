@@ -3,8 +3,10 @@ import ReactDOM from 'react-dom';
 import App from './App.js';
 import About from './About.js';
 import './index.css';
+import Register from './Register.js'
 // import { NameContextComponent } from './NameContext.js';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import Login from './Login.js';
 // import Bio from './Bio.js'
 
 
@@ -18,6 +20,12 @@ ReactDOM.render(
 
         <Switch>
           <Route exact path="/">
+            <Register />
+          </Route>
+          <Route exact path="/login">
+            <Login />
+          </Route>          
+          <Route exact path="/friends">
             <App />
           </Route>
           <Route path="/about">
